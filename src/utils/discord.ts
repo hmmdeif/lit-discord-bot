@@ -14,25 +14,40 @@ export const startup = async () => {
     client.login(DISCORD_TOKEN)
 }
 
-export const updatePresence = async (totalSupply: BigNumber, price: number) => {
+export const updatePricePresence = async (
+    totalSupply: BigNumber,
+    price: number
+) => {
     const priceStr = `$${price.toFixed(3)}`
-    const activityStr = `${(
-        totalSupply.div(BigNumber.from(10).pow(21)).toNumber() / 1000
-    ).toFixed(3)}M Market Cap`
+    // const activityStr = `${(
+    //     totalSupply.div(BigNumber.from(10).pow(21)).toNumber() / 1000
+    // ).toFixed(3)}M Market Cap`
     log(chalk.white(`Setting name: ${priceStr}`))
-    log(chalk.white(`Setting activity: ${activityStr}`))
+    // log(chalk.white(`Setting activity: ${activityStr}`))
 
     client.guilds.cache.forEach(async (guild) => {
         const me = await guild.members.fetchMe()
         if (me) {
             me.setNickname(priceStr)
         }
-    })    
+    })
+    // client.user?.setPresence({
+    //     activities: [
+    //         {
+    //             type: ActivityType.Watching,
+    //             name: activityStr,
+    //         },
+    //     ],
+    // })
+}
+
+export const updateActivityPresence = async (activity: string) => {
+    log(chalk.white(`Setting activity: ${activity}`))
     client.user?.setPresence({
         activities: [
             {
                 type: ActivityType.Watching,
-                name: activityStr,
+                name: activity,
             },
         ],
     })

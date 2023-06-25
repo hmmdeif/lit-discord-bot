@@ -2,6 +2,8 @@
 
 Tested on nodejs 16.x
 
+Obtains onchain bribe data and displays it in a loop as activity status. Optionally can display LIT price as name.
+
 ### Dev
 
 `npm run dev`
@@ -12,6 +14,8 @@ Copy and paste `.env.sample` and rename to `.env`. Fill in discord token and rpc
 
 `npm run build`
 `npm start`
+
+N.B. Bot restarts every hour at minute 0 in case of network connectivity issues
 
 ### Create Discord Application
 

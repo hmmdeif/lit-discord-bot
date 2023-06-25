@@ -3,6 +3,9 @@ export enum ContractAddress {
     lit,
     weth,
     usdc,
+    paladin_quest_board,
+    hidden_hand_bribe,
+    gauge_controller,
 }
 
 export enum PoolAddress {
@@ -15,6 +18,12 @@ export const addresses: { [key: string]: string } = {
     [ContractAddress.weth]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     [ContractAddress.usdc]: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
     [ContractAddress.multicall]: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696',
+    [ContractAddress.paladin_quest_board]:
+        '0x602E94D90F34126f31444D001732a1974378D9FC',
+    [ContractAddress.hidden_hand_bribe]:
+        '0x78C45fBDB71E7c0FbDfe49bDEFdACDcc4764336f',
+    [ContractAddress.gauge_controller]:
+        '0x901c8aA6A61f74aC95E7f397E22A0Ac7c1242218',
 }
 
 export const pools: { [key: string]: string } = {
