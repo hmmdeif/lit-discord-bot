@@ -1,6 +1,7 @@
 import { ContractAddress, addresses } from './network/addresses'
 import { getContract } from './network/contract'
 import * as hidden_hand_bribe_abi from './abis/hidden_hand_bribe_abi.json'
+import * as erc20_abi from './abis/erc20_abi.json'
 import * as gauge_controller_abi from './abis/gauge_controller_abi.json'
 import {
     Bribe,
@@ -57,6 +58,29 @@ export const updateHiddenHandBribeInfo = async () => {
     })
     const proposalDeadlines = await all<BigNumber[]>(proposalDeadlinesCall)
 
+    // get decimals of whitelisted bribe tokens
+    const decimalsParams = (erc20_abi as any).default.find(
+        (x: any) => x.name == 'decimals'
+    ) as any
+    const decimalsCall = whitelistedTokens
+        .filter((t) => t !== bribeVault)
+        .map((t) => {
+            return {
+                contract: {
+                    address: t,
+                },
+                name: decimalsParams.name,
+                inputs: decimalsParams.inputs,
+                outputs: decimalsParams.outputs,
+                params: [],
+            } as ContractCall
+        })
+    const decimals = await all<number[]>(decimalsCall)
+    const decimalsMap = whitelistedTokens.reduce((acc, t, i) => {
+        acc[t] = decimals[i]
+        return acc
+    }, {} as { [key: string]: number })
+
     // get bribe info for each proposal and filter out bribes with 0 amount
     const activeBribes = []
 
@@ -83,7 +107,9 @@ export const updateHiddenHandBribeInfo = async () => {
                     return {
                         ...b,
                         gauge: gauges[i],
-                        gaugeWeight: gaugeWeights[i],
+                        gaugeWeight: gaugeWeights[i].gt(0)
+                            ? gaugeWeights[i]
+                            : 1,
                     }
                 })
                 .filter((b) => b.bribeAmount.gt(0))
@@ -103,6 +129,8 @@ export const updateHiddenHandBribeInfo = async () => {
                     ? 'coingecko:ethereum'
                     : `ethereum:${b.bribeToken}`
             ].price
+        const decimal = decimalsMap[b.bribeToken] || 18
+        const pow = BigNumber.from(10).pow(18 - decimal)
 
         return {
             dollarPerVeLIT: Number(
@@ -115,7 +143,9 @@ export const updateHiddenHandBribeInfo = async () => {
             ),
             gauge: b.gauge,
             totalBribeInDollars: Number(
-                utils.formatEther(bigNumberUtils.multiply(b.bribeAmount, price))
+                utils.formatEther(
+                    bigNumberUtils.multiply(b.bribeAmount, price).mul(pow)
+                )
             ),
             totalVotes: utils.formatEther(b.gaugeWeight),
             name: '',

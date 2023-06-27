@@ -1,6 +1,6 @@
 # Bunni LIT Discord bot
 
-Tested on nodejs 16.x
+Tested on nodejs 18.x (uses native fetch api)
 
 Obtains onchain bribe data and displays it in a loop as activity status. Optionally can display LIT price as name.
 
