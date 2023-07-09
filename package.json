@@ -17,7 +17,7 @@
     "start": "pm2 start dist/index.js --cron-restart=\"0 * * * *\" --name bunni-discord",
     "build": "tsc",
     "stop": "pm2 restart bunni-discord --cron-restart 0 && pm2 stop bunni-discord",
-    "dev": "concurrently \"tsc -w\" \"pm2-dev start dist/index.js\"",
+    "dev": "concurrently \"tsc -w\" \"pm2-dev start ecosystem.config.js\"",
     "eslint": "eslint . --ext .ts",
     "prettify": "prettier --write \"src/**/*[.ts|.json]\"",
     "prettier": "prettier --check \"src/**/*[.ts|.json]\""

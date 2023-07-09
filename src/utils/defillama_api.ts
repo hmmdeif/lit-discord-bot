@@ -12,6 +12,11 @@ export interface CoinResult {
     coins: { [key: string]: Coin }
 }
 
+export interface BlockResult {
+    height: number
+    timestamp: number
+}
+
 export const getCoins = async (
     tokenAddresses: string[]
 ): Promise<CoinResult> => {
@@ -20,5 +25,13 @@ export const getCoins = async (
             ','
         )},coingecko:ethereum`
     )
+    return response.json()
+}
+
+export const getBlockForTimestamp = async (
+    chain: string,
+    timestamp: number
+): Promise<BlockResult> => {
+    const response = await fetch(`${baseUrl}/block/${chain}/${timestamp}`)
     return response.json()
 }

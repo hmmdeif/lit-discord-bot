@@ -1,25 +1,26 @@
 import { ContractAddress, addresses } from './network/addresses'
 import { getContract } from './network/contract'
-import * as hidden_hand_bribe_abi from './abis/hidden_hand_bribe_abi.json'
+import * as hidden_hand_bribe_v2_abi from './abis/hidden_hand_bribe_v2_abi.json'
 import * as erc20_abi from './abis/erc20_abi.json'
 import * as gauge_controller_abi from './abis/gauge_controller_abi.json'
 import {
     Bribe,
-    IHiddenHandBribeContract,
-} from './interfaces/IHiddenHandBribeContract'
+    IHiddenHandBribeV2Contract,
+} from './interfaces/IHiddenHandBribeV2Contract'
 import { ContractCall, all } from './utils/multicall'
 import { BigNumber, utils } from 'ethers'
 import { keccak256 } from 'ethers/lib/utils'
 import { CoinResult, getCoins } from './utils/defillama_api'
 import { bigNumberUtils } from './utils/helpers'
+import { getGauges } from './utils/gauge_controller'
 
-export const updateHiddenHandBribeInfo = async () => {
+export const updateHiddenHandBribeV2Info = async () => {
     const contract = getContract(
-        addresses[ContractAddress.hidden_hand_bribe],
-        hidden_hand_bribe_abi
-    ) as IHiddenHandBribeContract
+        addresses[ContractAddress.hidden_hand_bribe_v2],
+        hidden_hand_bribe_v2_abi
+    ) as IHiddenHandBribeV2Contract
 
-    const gauges = await contract.getGauges()
+    const gauges = await getGauges()
     let whitelistedTokens = await contract.getWhitelistedTokens()
     const bribeVault = await contract.BRIBE_VAULT()
     whitelistedTokens = [...whitelistedTokens, bribeVault]
@@ -42,13 +43,13 @@ export const updateHiddenHandBribeInfo = async () => {
     const gaugeWeights = await all<BigNumber[]>(gaugeWeightCall)
 
     // keccak256 each gauge address to get proposals and their deadlines
-    const proposalDeadlinesParams = (hidden_hand_bribe_abi as any).default.find(
+    const proposalDeadlinesParams = (hidden_hand_bribe_v2_abi as any).default.find(
         (x: any) => x.name == 'proposalDeadlines'
     ) as any
     const proposalDeadlinesCall = gauges.map((g) => {
         return {
             contract: {
-                address: addresses[ContractAddress.hidden_hand_bribe],
+                address: addresses[ContractAddress.hidden_hand_bribe_v2],
             },
             name: proposalDeadlinesParams.name,
             inputs: proposalDeadlinesParams.inputs,
@@ -85,13 +86,13 @@ export const updateHiddenHandBribeInfo = async () => {
     const activeBribes = []
 
     for (const token of whitelistedTokens) {
-        const bribeParams = (hidden_hand_bribe_abi as any).default.find(
+        const bribeParams = (hidden_hand_bribe_v2_abi as any).default.find(
             (x: any) => x.name == 'getBribe'
         ) as any
         const bribeCall = gauges.map((g, i) => {
             return {
                 contract: {
-                    address: addresses[ContractAddress.hidden_hand_bribe],
+                    address: addresses[ContractAddress.hidden_hand_bribe_v2],
                 },
                 name: bribeParams.name,
                 inputs: bribeParams.inputs,

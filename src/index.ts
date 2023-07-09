@@ -28,6 +28,7 @@ import { updateWardenBribeInfo } from './warden'
 import { updateHiddenHandBribeInfo } from './hidden_hand'
 import { getGaugeInfo } from './gauge'
 import { IBribeInfo, StoreKey, getStore, setStore } from './store'
+import { updateHiddenHandBribeV2Info } from './hidden_hand_v2'
 
 const config: BalancerSdkConfig = {
     network: Network.MAINNET,
@@ -63,11 +64,16 @@ const updatePrice = async (
 
 const updateBribeInfo = async () => {
     // get bribe info from warden and hidden hand
+    const hiddenHandBribeV2Info = await updateHiddenHandBribeV2Info()
     const wardenBribeInfo = await updateWardenBribeInfo()
-    const hiddenHandBribeInfo = await updateHiddenHandBribeInfo()
+    const hiddenHandBribeInfo = await updateHiddenHandBribeInfo() // remove once epoch has passed
 
     const bribeInfo: IBribeInfo[] = []
-    for (const bribe of [...wardenBribeInfo, ...hiddenHandBribeInfo]) {
+    for (const bribe of [
+        ...wardenBribeInfo,
+        ...hiddenHandBribeInfo,
+        ...hiddenHandBribeV2Info,
+    ]) {
         const b = bribeInfo.find((x) => x.gauge == bribe.gauge)
         if (b) {
             b.dollarPerVeLIT = bribe.dollarPerVeLIT + b.dollarPerVeLIT

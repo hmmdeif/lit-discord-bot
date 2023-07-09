@@ -5,6 +5,7 @@ export enum ContractAddress {
     usdc,
     paladin_quest_board,
     hidden_hand_bribe,
+    hidden_hand_bribe_v2,
     gauge_controller,
 }
 
@@ -22,6 +23,8 @@ export const addresses: { [key: string]: string } = {
         '0x602E94D90F34126f31444D001732a1974378D9FC',
     [ContractAddress.hidden_hand_bribe]:
         '0x78C45fBDB71E7c0FbDfe49bDEFdACDcc4764336f',
+    [ContractAddress.hidden_hand_bribe_v2]:
+        '0x175b01eF7CEa8615B1D9485BC827378EA5D50C86',
     [ContractAddress.gauge_controller]:
         '0x901c8aA6A61f74aC95E7f397E22A0Ac7c1242218',
 }

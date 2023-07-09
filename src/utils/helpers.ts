@@ -42,4 +42,10 @@ export class BigNumberUtils {
     }
 }
 
+export const getSignatureOfEvent = (event: any) => {
+    return utils.keccak256(
+        `${event.name}(${event.inputs.map((i: any) => i.type).join(',')})`
+    )
+}
+
 export const bigNumberUtils = new BigNumberUtils()
